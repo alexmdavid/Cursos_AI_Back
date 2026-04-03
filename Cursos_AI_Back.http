@@ -1,0 +1,6 @@
+@Cursos_AI_Back_HostAddress = http://localhost:5194
+
+GET {{Cursos_AI_Back_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
