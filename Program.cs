@@ -15,26 +15,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        policy => policy
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
-
 
 
 var app = builder.Build();
 
-// 1. CORS va PRIMERO para responder a los navegadores antes que nada
 app.UseCors("AllowAll");
 
-// 2. Luego el Swagger para documentación
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 // 3. OJO AQUÍ: En Render/Docker a veces HttpsRedirection da problemas si no tienes SSL configurado internamente. 
 // Render ya te da HTTPS desde afuera, así que puedes comentarlo o dejarlo así:
