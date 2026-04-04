@@ -1,6 +1,7 @@
 ﻿namespace Cursos_AI_Back.Services
 {
     using MailKit.Net.Smtp;
+    using MailKit.Security;
     using MimeKit;
 
     public class EmailService : IEmailService
@@ -23,7 +24,7 @@
             
             smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
-            await smtp.ConnectAsync("smtp.gmail.com", 587, false);
+            await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
 
             await smtp.AuthenticateAsync("joelarga2020@gmail.com", "mqkildfdumgjuohv");
 
