@@ -23,10 +23,14 @@
 
             
             smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
+            smtp.Timeout = 30000; // 30 segundos de espera
+            smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
 
-            await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+            await smtp.ConnectAsync("smtp.gmail.com", 465, SecureSocketOptions.SslOnConnect);
 
-            await smtp.AuthenticateAsync("joelarga2020@gmail.com", "mqkildfdumgjuohv");
+            //await smtp.AuthenticateAsync("joelarga2020@gmail.com", "mqkildfdumgjuohv");
+            var pass = Environment.GetEnvironmentVariable("GMAIL_PASSWORD");
+            await smtp.AuthenticateAsync("joelarga2020@gmail.com", pass);
 
             await smtp.SendAsync(email);
 
