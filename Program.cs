@@ -17,25 +17,32 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.AllowAnyOrigin() // O prueba con .WithOrigins("https://alexmdavid.github.io")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
 });
 
-
 var app = builder.Build();
-app.UseCors("AllowAll");
 
+// --- MIDDLEWARE (EL ORDEN ES VITAL) ---
+
+// 1. Swagger (si estás en dev)
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+// 2. CORS DEBE IR AQUÍ (Antes de Routing y MapControllers)
+app.UseCors("AllowAll");
+
+// 3. Comenta esto temporalmente para descartar que la redirección rompa el CORS
+// app.UseHttpsRedirection(); 
 
 app.UseAuthorization();
 
-app.MapControllers(); 
+// 4. Mapeo al final
+app.MapControllers();
 
 app.Run();
