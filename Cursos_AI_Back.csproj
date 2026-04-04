@@ -22,4 +22,10 @@
     <Folder Include="Repositories\" />
   </ItemGroup>
 
+    <ItemGroup>
+		<None Update="Templates\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
 </Project>

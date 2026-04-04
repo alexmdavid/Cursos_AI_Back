@@ -32,20 +32,26 @@
             await smtp.DisconnectAsync(true);
         }
 
+        private readonly IWebHostEnvironment _env;
+
+        public EmailService(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
+
         public async Task EnviarCorreoRegistroAsync(string para, string nombre)
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "Templates", "correo.html");
+            var path = Path.Combine(_env.ContentRootPath, "Templates", "correo.html");
+
+            if (!File.Exists(path))
+            {
+                throw new Exception($"No se encontró la plantilla en: {path}");
+            }
 
             var html = await File.ReadAllTextAsync(path);
-
-            // Personalización
             html = html.Replace("{{nombre}}", nombre);
 
-            await EnviarCorreoAsync(
-                para,
-                "🎓 Acceso a Cursos IA 2026",
-                html
-            );
+            await EnviarCorreoAsync(para, "🎓 Acceso a Cursos IA 2026", html);
         }
     }
 }

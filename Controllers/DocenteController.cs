@@ -23,18 +23,28 @@ namespace Cursos_AI_Back.Controllers
         [HttpPost]
         public async Task<IActionResult> Registrar([FromBody] Docente docente)
         {
-            docente.FechaRegistro = DateTime.UtcNow;
+            try
+            {
+                docente.FechaRegistro = DateTime.UtcNow;
+                _context.Docentes.Add(docente);
+                await _context.SaveChangesAsync();
 
-            _context.Docentes.Add(docente);
-            await _context.SaveChangesAsync();
+                try
+                {
+                    await _emailService.EnviarCorreoRegistroAsync(docente.Correo, docente.Nombres);
+                }
+                catch (Exception exEmail)
+                {
+                    // Si falla el correo, que al menos nos diga por qué pero que no rompa el CORS
+                    return Ok(new { mensaje = "Docente guardado, pero falló el envío del correo", error = exEmail.Message });
+                }
 
-            // 📩 CORREO DE PRUEBA 
-            await _emailService.EnviarCorreoRegistroAsync(
-            docente.Correo,
-            docente.Nombres
-        );
-
-            return Ok(new { mensaje = "Docente registrado y correo enviado" });
+                return Ok(new { mensaje = "Docente registrado y correo enviado" });
+            }
+            catch (Exception exGlobal)
+            {
+                return StatusCode(500, new { error = exGlobal.Message, detalle = exGlobal.InnerException?.Message });
+            }
         }
 
         [HttpGet("test")]
