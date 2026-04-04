@@ -25,14 +25,17 @@ builder.Services.AddCors(options =>
 
 
 var app = builder.Build();
-
 app.UseCors("AllowAll");
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-// 3. OJO AQUÍ: En Render/Docker a veces HttpsRedirection da problemas si no tienes SSL configurado internamente. 
-// Render ya te da HTTPS desde afuera, así que puedes comentarlo o dejarlo así:
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
-app.MapControllers();
+
+app.MapControllers(); 
+
 app.Run();
