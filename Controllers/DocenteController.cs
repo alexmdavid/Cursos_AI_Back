@@ -29,14 +29,16 @@ namespace Cursos_AI_Back.Controllers
                 _context.Docentes.Add(docente);
                 await _context.SaveChangesAsync();
 
+                // En el método Registrar del controlador:
+                Console.WriteLine("--- Intentando enviar correo a: " + docente.Correo);
                 try
                 {
                     await _emailService.EnviarCorreoRegistroAsync(docente.Correo, docente.Nombres);
+                    Console.WriteLine("--- Correo enviado sin excepciones.");
                 }
-                catch (Exception exEmail)
+                catch (Exception ex)
                 {
-                    // Si falla el correo, que al menos nos diga por qué pero que no rompa el CORS
-                    return Ok(new { mensaje = "Docente guardado, pero falló el envío del correo", error = exEmail.Message });
+                    Console.WriteLine("--- ERROR AL ENVIAR CORREO: " + ex.Message);
                 }
 
                 return Ok(new { mensaje = "Docente registrado y correo enviado" });

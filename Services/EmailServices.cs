@@ -42,17 +42,30 @@
 
         public async Task EnviarCorreoRegistroAsync(string para, string nombre)
         {
-            var path = Path.Combine(_env.ContentRootPath, "Templates", "correo.html");
-
-            if (!File.Exists(path))
+            string cuerpoHtml;
+            try
             {
-                throw new Exception($"No se encontró la plantilla en: {path}");
+                // Intenta leer el archivo
+                var path = Path.Combine(AppContext.BaseDirectory, "Templates", "correo.html");
+                if (File.Exists(path))
+                {
+                    cuerpoHtml = await File.ReadAllTextAsync(path);
+                    cuerpoHtml = cuerpoHtml.Replace("{{nombre}}", nombre);
+                }
+                else
+                {
+                    // SI NO EXISTE, NO LANZAMOS ERROR, usamos un texto base
+                    cuerpoHtml = $"<h1>Hola {nombre}</h1><p>Gracias por registrarte.</p>";
+                    Console.WriteLine("Aviso: No se encontró la plantilla, usando HTML de respaldo.");
+                }
+            }
+            catch (Exception ex)
+            {
+                cuerpoHtml = $"<h1>Hola {nombre}</h1><p>Registro exitoso.</p>";
+                Console.WriteLine($"Error con la plantilla: {ex.Message}");
             }
 
-            var html = await File.ReadAllTextAsync(path);
-            html = html.Replace("{{nombre}}", nombre);
-
-            await EnviarCorreoAsync(para, "🎓 Acceso a Cursos IA 2026", html);
+            await EnviarCorreoAsync(para, "🎓 Acceso a Cursos IA 2026", cuerpoHtml);
         }
     }
 }
