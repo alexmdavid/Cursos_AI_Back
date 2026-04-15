@@ -18,7 +18,7 @@ COPY --from=build-env /app/out .
 
 # Configurar el puerto para Render
 # Render asigna un puerto dinámico mediante la variable de entorno PORT
-ENV ASPNETCORE_URLS=http://+:10000
-EXPOSE 10000
+ENV ASPNETCORE_URLS=http://+:80
+EXPOSE 80
 
 ENTRYPOINT ["dotnet", "Cursos_AI_Back.dll"]
