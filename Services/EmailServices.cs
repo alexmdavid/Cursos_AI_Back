@@ -30,7 +30,7 @@ namespace Cursos_AI_Back.Services
             {
                 // --- CONFIGURACIÓN PARA GMAIL ---
                 var host = "smtp.gmail.com";
-                var port = 465;
+                var port = 587;
                 var user = "ruidiazcarrascala@gmail.com";
                 var pass = "qwhrmwetmmavvwpm"; // Tu App Password de 16 caracteres
 
