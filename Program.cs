@@ -30,13 +30,16 @@ var app = builder.Build();
 
 // --- MIDDLEWARE (EL ORDEN ES VITAL) ---
 
-// 1. Swagger (si estás en dev)
-if (app.Environment.IsDevelopment())
+// Quita el "if" si quieres verlo siempre
+// if (app.Environment.IsDevelopment()) 
+// {
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mi API V1");
+    c.RoutePrefix = string.Empty; // Esto hace que Swagger abra en la raíz (ej: midominio.com/)
+});
+// }
 // 2. CORS DEBE IR AQUÍ (Antes de Routing y MapControllers)
 app.UseCors("AllowAll");
 
