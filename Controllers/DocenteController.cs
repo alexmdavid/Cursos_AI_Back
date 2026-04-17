@@ -2,6 +2,7 @@
 using Cursos_AI_Back.Models;
 using Cursos_AI_Back.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 namespace Cursos_AI_Back.Controllers
@@ -75,6 +76,12 @@ namespace Cursos_AI_Back.Controllers
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> ObtenerTodos()
+        {
+            var docentes = await _context.Docentes.ToListAsync();
+            return Ok(docentes);
+        }
     }
 
 
