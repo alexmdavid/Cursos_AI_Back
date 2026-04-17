@@ -82,7 +82,76 @@ namespace Cursos_AI_Back.Controllers
             var docentes = await _context.Docentes.ToListAsync();
             return Ok(docentes);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ObtenerPorId(int id)
+        {
+            var docente = await _context.Docentes.FindAsync(id);
+
+            if (docente == null)
+                return NotFound(new { mensaje = "Docente no encontrado" });
+
+            return Ok(docente);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Actualizar(int id, [FromBody] Docente docente)
+        {
+            var existente = await _context.Docentes.FindAsync(id);
+
+            if (existente == null)
+                return NotFound(new { mensaje = "No existe" });
+
+            existente.Nombres = docente.Nombres;
+            existente.Apellidos = docente.Apellidos;
+            existente.Correo = docente.Correo;
+            existente.Telefono = docente.Telefono;
+            existente.Ciudad = docente.Ciudad;
+            existente.Pais = docente.Pais;
+            existente.Institucion = "";
+            existente.Cargo = "";
+            existente.AreaEnsenanza = "";
+            existente.NivelEducativo = "";
+            existente.AceptaComunicaciones = docente.AceptaComunicaciones;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(existente);
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Eliminar(int id)
+        {
+            var docente = await _context.Docentes.FindAsync(id);
+
+            if (docente == null)
+                return NotFound(new { mensaje = "No existe" });
+
+            _context.Docentes.Remove(docente);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { mensaje = "Eliminado correctamente" });
+        }
+
+        [HttpGet("buscar")]
+        public async Task<IActionResult> BuscarPorCorreo(string correo)
+        {
+            var resultados = await _context.Docentes
+                .Where(d => d.Correo.Contains(correo))
+                .ToListAsync();
+
+            return Ok(resultados);
+        }
+
+        [HttpGet("total")]
+        public async Task<IActionResult> Total()
+        {
+            var total = await _context.Docentes.CountAsync();
+            return Ok(new { total });
+        }
+
+
+
     }
-
-
 }
