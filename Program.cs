@@ -2,7 +2,10 @@ using Cursos_AI_Back.Data;
 using Cursos_AI_Back.Services;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 // Add services to the container.
 
@@ -31,6 +34,12 @@ builder.Services.AddCors(options =>
 builder.WebHost.UseUrls("http://0.0.0.0:80");
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+}
 
 // --- MIDDLEWARE (EL ORDEN ES VITAL) ---
 

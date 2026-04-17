@@ -17,30 +17,23 @@ namespace Cursos_AI_Back.Services
         public async Task EnviarCorreoAsync(string para, string asunto, string contenidoHtml)
         {
             var email = new MimeMessage();
-            // Remitente: Debe ser el mismo correo que autentica
-            email.From.Add(new MailboxAddress("Playdiom Community", "ruidiazcarrascala@gmail.com"));
+            // Usamos el usuario de la configuración para el remitente
+            var user = _config["SmtpSettings:User"];
+            var pass = _config["SmtpSettings:Pass"];
+            var host = _config["SmtpSettings:Host"];
+            var port = int.Parse(_config["SmtpSettings:Port"] ?? "587");
+
+            email.From.Add(new MailboxAddress("Playdiom Community", user));
             email.To.Add(MailboxAddress.Parse(para));
             email.Subject = asunto;
 
             email.Body = new TextPart("html") { Text = contenidoHtml };
 
             using var smtp = new SmtpClient();
-
             try
             {
-                // --- CONFIGURACIÓN PARA GMAIL ---
-                var host = "smtp.gmail.com";
-                var port = 587;
-                var user = "ruidiazcarrascala@gmail.com";
-                var pass = "qwhrmwetmmavvwpm"; // Tu App Password de 16 caracteres
-
-                // 1. BYPASS DE SEGURIDAD (Soluciona el error de revocación en redes locales/unimag)
                 smtp.CheckCertificateRevocation = false;
                 smtp.ServerCertificateValidationCallback = (s, c, h, e) => true;
-                smtp.Timeout = 30000; // Aumentamos a 30s por si la red es lenta
-
-                // 2. CONEXIÓN Y ENVÍO
-                Console.WriteLine($"--- Intentando enviar correo a: {para}...");
 
                 await smtp.ConnectAsync(host, port, SecureSocketOptions.StartTls);
                 await smtp.AuthenticateAsync(user, pass);
